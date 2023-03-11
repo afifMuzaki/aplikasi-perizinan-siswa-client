@@ -1,14 +1,14 @@
-// import '../../styles/login.css';
 import { Container, Row, Card, Form, Button } from 'react-bootstrap';
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-// import { setAuthToken } from '../../bin/setAuthToken';
+import jwtDecode from 'jwt-decode';
 
 const LoginForm = () => {
     const [userName, setUserName] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
+    const [roleUser, setRoleUser] = useState('');
 
     const Auth = async (e) => {
         e.preventDefault();
@@ -19,7 +19,20 @@ const LoginForm = () => {
             }, { withCredentials: true });
             const accessToken = response.data.accessToken;
             localStorage.setItem('accessToken', accessToken);
-            navigate('/izin');
+
+            const decode = jwtDecode(accessToken);
+            const userRole = decode.userRole;
+            
+            switch (userRole) {
+                case 'siswa':
+                    navigate('/siswa/izin');
+                    break;
+                case 'guru':
+                    navigate('/guru/permintaan-izin');
+                    break;
+                default:
+                    break;
+            }
         } catch (err) {
            console.log(err);
         }

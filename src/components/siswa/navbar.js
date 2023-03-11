@@ -1,10 +1,27 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Navbar, Container, Nav } from "react-bootstrap";
 
 const NavbarSiswa = () => {
     const navigate = useNavigate();
+    const [activeIndex, setActiveIndex] = useState(null);
+    const location = useLocation();
+
+    useEffect(() => {
+        const activePath = location.pathname;
+
+        switch (activePath) {
+            case '/siswa/izin':
+                setActiveIndex(0)
+                break;
+            case '/siswa/riwayat':
+                setActiveIndex(1)
+                break;
+            default:
+                setActiveIndex(null)
+        }
+    }, [location])
 
     const logout = async (e) => {
         try {
@@ -22,14 +39,14 @@ const NavbarSiswa = () => {
     return (
         <Navbar bg="dark" expand="md" sticky="top" className="py-3">
             <Container>
-                <Navbar.Toggle aria-controls="collapse navbar-collapse" className="bg-warning my-2 "/>
+                <Navbar.Toggle aria-controls="collapse navbar-collapse" className="bg-warning my-2 " />
                 <Navbar.Collapse id="collapse navbar-collapse">
                     <Nav className="me-auto">
-                        <Nav.Item className="bg-warning rounded-2 mx-2 px-3">
-                            <Nav.Link className="text-white" href="/izin">Pengajuan Izin</Nav.Link>
+                        <Nav.Item className={activeIndex === 0 ? 'bg-warning rounded-2 mx-3 px-3' : ''}>
+                            <Link to='/siswa/izin' className="text-white nav-link">Pengajuan Izin</Link>
                         </Nav.Item>
-                        <Nav.Item className="rounded-2 mx-2 px-3">
-                            <Nav.Link className="text-white" href="/izin/riwayat">Riwayat Izin</Nav.Link>
+                        <Nav.Item className={activeIndex === 1 ? 'bg-warning rounded-2 mx-3 px-3' : ''}>
+                            <Link to='/siswa/riwayat' className="text-white nav-link">Riwayat Izin</Link>
                         </Nav.Item>
                         <Nav.Link className="text-white" onClick={logout}>Logout</Nav.Link>
                     </Nav>

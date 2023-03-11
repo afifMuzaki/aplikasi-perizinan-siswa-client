@@ -1,27 +1,23 @@
 import React from "react";
-import Footer from "./footer";
-import Dashboard from "./guruContent/dashboard";
-import PermintaanIzin from "./guruContent/permintaanIzin";
-import RekapIzin from "./guruContent/rekapIzin";
-import Navbar from "./navbar";
-import SideBar from "./sidebar";
+import SideBar from "../templateLayout/sidebar";
+import Footer from "../templateLayout/footer";
+import Header from "../templateLayout/header";
+import RekapIzinContent from "./content/rekapIzinContent";
 
-const Index = () => {
+const RekapIzinPetugas = () => {
     return (
         <div id="page-top">
             <div id="wrapper">
-            {/* Sidebar*/}
-                <SideBar/>
-            {/* Sidebar */}
+                {/* Sidebar*/}
+                <SideBar status='petugas'/>
+                {/* Sidebar */}
                 <div className="d-flex flex-column" id="content-wrapper">
                     <div id="content">
                         {/* Navbar */}
-                        <Navbar/>
+                        <Header/>
                         {/* Navbar */}
                         {/* Conntent */}
-                        {/* <Dashboard/> */}
-                        {/* <PermintaanIzin/> */}
-                        <RekapIzin/>
+                        <RekapIzinContent/>
                         {/* Conntent */}
                     </div>
                     {/* Footer */}
@@ -36,4 +32,4 @@ const Index = () => {
     );
 };
 
-export default Index;
+export default RekapIzinPetugas;
