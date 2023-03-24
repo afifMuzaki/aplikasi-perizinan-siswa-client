@@ -22,7 +22,7 @@ const LoginForm = () => {
 
             const decode = jwtDecode(accessToken);
             const userRole = decode.userRole;
-            
+
             switch (userRole) {
                 case 'siswa':
                     navigate('/siswa/izin');
@@ -30,11 +30,14 @@ const LoginForm = () => {
                 case 'guru':
                     navigate('/guru/permintaan-izin');
                     break;
+                case 'petugas':
+                    navigate('/petugas/permintaan-izin');
+                    break;
                 default:
                     break;
             }
         } catch (err) {
-           console.log(err);
+            console.log(err);
         }
     }
 

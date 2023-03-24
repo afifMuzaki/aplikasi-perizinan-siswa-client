@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import jwtDecode from 'jwt-decode';
 import SideBar from "../templateLayout/sidebar";
 import Footer from "../templateLayout/footer";
 import Header from "../templateLayout/header";
-import RekapIzin from "../contents/guruContent/rekapIzin";
+import DetailPerizinan from "../contents/guruContent/detailPerizinan"
 
-const RekapIzinGuru = () => {
+const DetailPerizinanGuru = () => {
     const [userName, setUserName] = useState('');
 
     useEffect(() => {
@@ -26,7 +26,7 @@ const RekapIzinGuru = () => {
                         <Header userName={userName}/>
                         {/* Navbar */}
                         {/* Conntent */}
-                        <RekapIzin userName={userName}/>
+                        <DetailPerizinan />
                         {/* Conntent */}
                     </div>
                     {/* Footer */}
@@ -41,4 +41,4 @@ const RekapIzinGuru = () => {
     );
 };
 
-export default RekapIzinGuru;
+export default DetailPerizinanGuru;

@@ -15,8 +15,8 @@ const FormIzin = () => {
     const [waktuIzin, setWaktuIzin] = useState('');
     const [waktuKembali, setWaktuKembali] = useState('');
     const [jenisIzin, setJenisIzin] = useState('');
-    const [mapelIzin, setMapelIzin] = useState('');
     const [alasanIzin, setAlasanIzin] = useState('');
+    const [selectedOptions, setSelectedOptions] = useState([]);
 
     useEffect(() => {
         const accessToken = localStorage.getItem('accessToken');
@@ -24,57 +24,78 @@ const FormIzin = () => {
         const decode = jwtDecode(accessToken);
         setNis(decode.userKredensial);
 
+        handleAddSelect();
+
         axios.get('http://localhost:9000/api/siswa/identity', {
             headers: {
                 'Authorization': `Bearer ${accessToken}`
             }
         }).then(response => {
-                setDataSiswa(response.data)
-            }).catch(err => {
-                console.log(err);
-            });
+            setDataSiswa(response.data)
+        }).catch(err => {
+            console.log(err);
+        });
 
         axios.get('http://localhost:9000/api/guru/all', {
             headers: {
                 'Authorization': `Bearer ${accessToken}`
             }
         }).then(response => {
-                setDataGuru(response.data)
-            }).catch(err => {
-                console.log(err);
-            });
+            setDataGuru(response.data)
+        }).catch(err => {
+            console.log(err);
+        });
 
         axios.get('http://localhost:9000/api/mapel/all', {
             headers: {
                 'Authorization': `Bearer ${accessToken}`
             }
         }).then(response => {
-                setDataMapel(response.data)
-            }).catch(err => {
-                console.log(err);
-            });
+            setDataMapel(response.data)
+        }).catch(err => {
+            console.log(err);
+        });
 
         axios.get('http://localhost:9000/api/kategori/all', {
             headers: {
                 'Authorization': `Bearer ${accessToken}`
             }
         }).then(response => {
-                setDataKategori(response.data)
-            }).catch(err => {
-                console.log(err);
-            });
+            setDataKategori(response.data)
+        }).catch(err => {
+            console.log(err);
+        });
     }, []);
+
+    const handleSelectChange = (e, index) => {
+        const newSelectedOptions = [...selectedOptions];
+        newSelectedOptions[index] = e.target.value;
+        setSelectedOptions(newSelectedOptions);
+    }
+
+    const handleAddSelect = () => {
+        if (selectedOptions.length < 5) {
+            setSelectedOptions([...selectedOptions, '']);
+        }
+    }
+
+    const handleRemoveSelect = (index) => {
+        if (index === 0) return;
+        const newSelectedOptions = [...selectedOptions];
+        newSelectedOptions.splice(index, 1);
+        setSelectedOptions(newSelectedOptions);
+    }
 
     const handleSubmit = (e) => {
         e.preventDefault();
         const accessToken = localStorage.getItem('accessToken');
 
-        const mapels = {
-            mapel1: mapelIzin
-        };
+        const data = {
+            mapel: selectedOptions.filter((option) => option !== ''),
+        }
 
-        const mapelJson = JSON.stringify(mapels)
-        
+        const mapelJson = JSON.stringify(data)
+
         axios.post('http://localhost:9000/api/siswa/izin', {
             kredensial: nis,
             nipGuru: guruMapel,
@@ -88,7 +109,14 @@ const FormIzin = () => {
                 'Authorization': `Bearer ${accessToken}`
             }
         }).then(response => {
-            console.log(response);
+            window.alert(response.data);
+
+            setGuruMapel('');
+            setJenisIzin('');
+            setSelectedOptions([]);
+            setAlasanIzin('');
+            setWaktuIzin('');
+            setWaktuKembali('');
         }).catch(err => {
             console.log(err);
         });
@@ -103,7 +131,7 @@ const FormIzin = () => {
                     <Row>
                         <div className="col-12 col-md-6 my-3">
                             <Form.Label className="fw-semibold">Nama Siswa</Form.Label>
-                            <Form.Control type="text" disabled defaultValue={dataSiswa.namaSiswa}/>
+                            <Form.Control type="text" disabled defaultValue={dataSiswa.namaSiswa} />
                         </div>
                         <div className="col-12 col-md-6 my-3">
                             <Form.Label className="fw-semibold">NIS Siswa</Form.Label>
@@ -111,7 +139,7 @@ const FormIzin = () => {
                         </div>
                         <div className="col-12 col-md-6 my-3">
                             <Form.Label className="fw-semibold">Kelas</Form.Label>
-                            <Form.Control type="text" disabled defaultValue={dataSiswa.kelasSiswa}/>
+                            <Form.Control type="text" disabled defaultValue={dataSiswa.kelasSiswa} />
                         </div>
                         <div className="col-12 col-md-6 my-3">
                             <Form.Label className="fw-semibold">Guru Mapel</Form.Label>
@@ -130,7 +158,7 @@ const FormIzin = () => {
                         </div>
                         <div className="col-12 col-md-6 my-3">
                             <Form.Label className="fw-semibold">Waktu Kembali</Form.Label>
-                            <Form.Control type="time" name="waktuKembali" value={waktuKembali} onChange={(e) => setWaktuKembali(e.target.value)}/>
+                            <Form.Control type="time" name="waktuKembali" value={waktuKembali} onChange={(e) => setWaktuKembali(e.target.value)} />
                         </div>
                         <div className="col-12 col-md-6 my-3">
                             <Form.Label className="fw-semibold">Jenis Izin</Form.Label>
@@ -146,23 +174,27 @@ const FormIzin = () => {
                         <div className="col-12 col-md-6 my-3">
                             <Form.Label className="fw-semibold">Mata Pelajaran yang Ditinggalkan</Form.Label>
                             <div className="d-inline">
-                                <div className="my-2">
-                                    <Form.Select className="w-75 d-inline me-2" name="mapelIzin" value={mapelIzin} onChange={(e) => setMapelIzin(e.target.value)}>
-                                        <optgroup label="Mata Pelajaran yang Ditinggalkan">
-                                            <option>-</option>
-                                            {dataMapel.map(item => (
-                                                <option key={item.id} value={item.mapel}>{item.mapel}</option>
-                                            ))}
-                                        </optgroup>
-                                    </Form.Select>
-                                    <Button variant="danger" className="d-inline text-white fw-semibold">-</Button>
-                                </div>
-                                <Anchor className="text-decoration-none text-success fw-semibold" href="#">+ Tambah Mapel</Anchor>
+                                {selectedOptions.map((option, index) => (
+                                    <div className="my-2" key={index}>
+                                        <Form.Select className="w-75 d-inline me-2" name="mapelIzin" value={option} onChange={(e) => handleSelectChange(e, index)}>
+                                            <optgroup label="Mata Pelajaran yang Ditinggalkan">
+                                                <option>-</option>
+                                                {dataMapel.map(item => (
+                                                    <option key={item.id} value={item.mapel}>{item.mapel}</option>
+                                                ))}
+                                            </optgroup>
+                                        </Form.Select>
+                                        {index !== 0 && (
+                                            <Button variant="danger" className="d-inline text-white fw-semibold" onClick={handleRemoveSelect}>-</Button>
+                                        )}
+                                    </div>
+                                ))}
+                                <Anchor className="text-decoration-none text-success fw-semibold" onClick={handleAddSelect}>+ Tambah Mapel</Anchor>
                             </div>
                         </div>
                         <div className="col-12 col-md-6 my-3">
                             <Form.Label className="fw-semibold">Alasan Izin</Form.Label>
-                            <Form.Control as="textarea" size="lg" name="alasan" value={alasanIzin} onChange={(e) => setAlasanIzin(e.target.value)}/>
+                            <Form.Control as="textarea" size="lg" name="alasan" value={alasanIzin} onChange={(e) => setAlasanIzin(e.target.value)} />
                         </div>
                         <div className="col-12 my-3">
                             <Button variant="success" className="fw-semibold my-2 float-end" type="submit">Kirim</Button>

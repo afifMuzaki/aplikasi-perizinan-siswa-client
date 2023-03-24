@@ -2,7 +2,7 @@ import React from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const Header = () => {
+const Header = ({userName}) => {
     const navigate = useNavigate();
 
     const logout = async (e) => {
@@ -45,7 +45,7 @@ const Header = () => {
                     <li className="nav-item dropdown no-arrow">
                         <div className="nav-item dropdown no-arrow">
                             <a className="dropdown-toggle nav-link" aria-expanded="false" data-bs-toggle="dropdown" href="#">
-                                <span className="d-none d-lg-inline me-2 text-dark">Guru1</span>
+                                <span className="d-none d-lg-inline me-2 text-dark">{userName}</span>
                             </a>
                             <div className="dropdown-menu shadow dropdown-menu-end animated--grow-in">
                                 <a className="dropdown-item" onClick={logout}>

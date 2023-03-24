@@ -1,10 +1,19 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
+import jwtDecode from 'jwt-decode';
 import SideBar from "../templateLayout/sidebar";
 import Footer from "../templateLayout/footer";
 import Header from "../templateLayout/header";
-import PermintaanIzinContent from "./content/permintaanIzinContent";
+import PermintaanIzin from "../contents/petugasContent/permintaanIzin";
 
 const PermintaanIzinPetugas = () => {
+    const [userName, setUserName] = useState('');
+
+    useEffect(() => {
+        const accessToken = localStorage.getItem('accessToken');
+        const decode = jwtDecode(accessToken);
+        setUserName(decode.userName)
+    }, []);
+
     return (
         <div id="page-top">
             <div id="wrapper">
@@ -14,10 +23,10 @@ const PermintaanIzinPetugas = () => {
                 <div className="d-flex flex-column" id="content-wrapper">
                     <div id="content">
                         {/* Navbar */}
-                        <Header/>
+                        <Header userName={userName}/>
                         {/* Navbar */}
                         {/* Conntent */}
-                        <PermintaanIzinContent/>
+                        <PermintaanIzin/>
                         {/* Conntent */}
                     </div>
                     {/* Footer */}

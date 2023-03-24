@@ -1,15 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
+import IzinCetak from "../../../aditionalComponents/izinCetak";
+import { PDFDownloadLink } from "@react-pdf/renderer";
 
-const PermintaanIzinContentGuru = () => {
+const PermintaanIzinContentPetugas = () => {
     const [dataIzinReq, setIzinReq] = useState([]);
     const [isEmpty, setIsEmpty] = useState(false);
     const [message, setMessage] = useState('');
+    const [catatanPetugas, setCatatanPetugas] = useState('');
 
     useEffect(() => {
         const accessToken = localStorage.getItem('accessToken');
 
-        axios.get('http://localhost:9000/api/guru/izins/request', {
+        axios.get('http://localhost:9000/api/petugas/izins/request', {
             headers: {
                 'Authorization': `Bearer ${accessToken}`
             }
@@ -24,28 +27,44 @@ const PermintaanIzinContentGuru = () => {
         });
     }, []);
 
-    const sendStatus = (status, idTrans) => {
+    const sendStatus = (e, status, idTrans) => {
+        e.preventDefault();
         const accessToken = localStorage.getItem('accessToken');
 
-        axios.post('http://localhost:9000/api/guru/izins/verify', {
+        axios.post('http://localhost:9000/api/petugas/izins/verify', {
             status,
-            idTrans
+            idTrans,
+            catatan: catatanPetugas
         }, {
             headers: {
                 'Authorization': `Bearer ${accessToken}`
             }
         }).then(response => {
-            console.log(response.data);
-        })
+            window.alert(response.data.message);
+            setIzinReq(prevRequest => prevRequest.filter(request => request.id !== idTrans));
+        }).catch(err => {
+            console.log(err);
+        });
     }
+
+    const jsonToArr = (json) => {
+        const arrMapel = JSON.parse(json);
+        return arrMapel.mapel.map((option, index) => (
+            <p key={index}>- Mapel {index + 1}: {option}</p>
+        ));
+    }
+
+    const componentRef = useRef();
 
     if (isEmpty === true) {
         return (
             <div className="container-fluid">
                 <h3 className="text-dark mb-2">Permintaan Izin</h3>
-                <div className="row justify-content-center">
-                    <div className="alert alert-successs col-3 alert-dismissible shadow" role="alert">
-                        <p className="text-success text-center fw-semibold">{message}</p>
+                <div className="row">
+                    <div className="row justify-content-center">
+                        <div className="alert alert-successs col-3 alert-dismissible shadow" role="alert">
+                            <p className="text-success text-center fw-semibold">{message}</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -56,7 +75,7 @@ const PermintaanIzinContentGuru = () => {
                 <h3 className="text-dark mb-2">Permintaan Izin</h3>
                 <div className="row">
                     {dataIzinReq.map(item => (
-                        <div key={item.id} className="col-md-4 col-12 my-3 permintaan">
+                        <div key={item.id} className="col-md-4 col-12 my-3">
                             <div className="card">
                                 <div className="card-header bg-dark text-white">
                                     <h4 className="d-inline">{item.transaksiIzin.izinSiswa.nama}</h4>
@@ -73,7 +92,7 @@ const PermintaanIzinContentGuru = () => {
                     ))}
                 </div>
                 {dataIzinReq.map(item => (
-                    <div key={item.id} className="modal fade" role="dialog" tabindex="-1" id={`modal-${item.id}`}>
+                    <div key={item.id} className="modal fade" role="dialog" tabIndex="-1" id={`modal-${item.id}`}>
                         <div className="modal-dialog modal-lg" role="document">
                             <div className="modal-content">
                                 <div className="modal-header text-dark">
@@ -101,17 +120,33 @@ const PermintaanIzinContentGuru = () => {
                                     </div>
                                     <div className="col-12 my-2"><label className="form-label fw-semibold">Mata Pelajaran yang Ditinggalkan :</label>
                                         <div className="col-12">
-                                            <p>Mapel 1 : {item.transaksiIzin.mapel}</p>
+                                            {jsonToArr(item.transaksiIzin.mapel)}
                                         </div>
                                     </div>
-                                    <div className="col-12 my-2"><label className="form-label fw-semibold">Alasan Izin</label>
-                                        <input className="form-control-lg form-control" type="text" disabled="" value={item.transaksiIzin.alasan} />
+                                    <div className="col-12 my-2">
+                                        <label className="form-label fw-semibold">Persetujuan Guru :</label>
+                                        <span className="fs-6 mx-3">{item.izin_guru}</span>
+                                    </div>
+                                    <div className="col-12 my-2">
+                                        <label className="form-label fw-semibold">Catatan Guru</label>
+                                        <input className="form-control" type="text" disabled value={item.catatan_guru} />
+                                    </div>
+                                    <div className="col-12 my-2">
+                                        <label className="form-label fw-semibold">Alasan Izin</label>
+                                        <input className="form-control" type="text" disabled value={item.transaksiIzin.alasan} />
+                                    </div>
+                                    <div className="col-12 my-2">
+                                        <label className="form-label fw-semibold">Catatan Petugas</label>
+                                        <textarea className="form-control" value={catatanPetugas} onChange={(e) => setCatatanPetugas(e.target.value)} />
                                     </div>
                                 </div>
                                 <div className="modal-footer">
+                                    {/* <PDFDownloadLink document={<IzinCetak />} fileName="test">
+                                        {({ loading }) => (loading ? <button className="btn btn-success mx-2 text-white" type="button">Memuat dokument...</button> : <button className="btn btn-success mx-2 text-white" type="button">Print</button>)}
+                                    </PDFDownloadLink> */}
                                     <button className="btn btn-primary" onClick={() => sendStatus('Disetujui', item.id)} type="button">Setujui</button>
                                     <button className="btn btn-danger" onClick={() => sendStatus('Ditolak', item.id)} type="button">Tolak</button>
-                                    <button className="btn btn-light" type="button" data-bs-dismiss="modal">Close</button>
+                                    <button className="btn btn-light" type="button" data-bs-dismiss="modal">Batal</button>
                                 </div>
                             </div>
                         </div>
@@ -122,4 +157,4 @@ const PermintaanIzinContentGuru = () => {
     }
 }
 
-export default PermintaanIzinContentGuru;
+export default PermintaanIzinContentPetugas;

@@ -21,7 +21,7 @@ const NavbarSiswa = () => {
             default:
                 setActiveIndex(null)
         }
-    }, [location])
+    }, [location]);
 
     const logout = async (e) => {
         try {

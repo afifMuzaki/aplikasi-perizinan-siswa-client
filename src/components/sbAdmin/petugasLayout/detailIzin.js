@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
+import React, {useState, useEffect} from "react";
 import jwtDecode from 'jwt-decode';
 import SideBar from "../templateLayout/sidebar";
 import Footer from "../templateLayout/footer";
 import Header from "../templateLayout/header";
-import RekapIzin from "../contents/guruContent/rekapIzin";
+import DetailIzin from "../contents/petugasContent/detailIzin";
 
-const RekapIzinGuru = () => {
+const DetailIzinPetugas = () => {
     const [userName, setUserName] = useState('');
 
     useEffect(() => {
@@ -18,7 +18,7 @@ const RekapIzinGuru = () => {
         <div id="page-top">
             <div id="wrapper">
                 {/* Sidebar*/}
-                <SideBar status='guru'/>
+                <SideBar status='petugas'/>
                 {/* Sidebar */}
                 <div className="d-flex flex-column" id="content-wrapper">
                     <div id="content">
@@ -26,7 +26,7 @@ const RekapIzinGuru = () => {
                         <Header userName={userName}/>
                         {/* Navbar */}
                         {/* Conntent */}
-                        <RekapIzin userName={userName}/>
+                        <DetailIzin/>
                         {/* Conntent */}
                     </div>
                     {/* Footer */}
@@ -41,4 +41,4 @@ const RekapIzinGuru = () => {
     );
 };
 
-export default RekapIzinGuru;
+export default DetailIzinPetugas;
