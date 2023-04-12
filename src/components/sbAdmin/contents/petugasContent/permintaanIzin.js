@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import IzinCetak from "../../../aditionalComponents/izinCetak";
-import { PDFDownloadLink } from "@react-pdf/renderer";
+// import IzinCetak from "../../../aditionalComponents/izinCetak";
+// import { PDFDownloadLink } from "@react-pdf/renderer";
 
 const PermintaanIzinContentPetugas = () => {
     const [dataIzinReq, setIzinReq] = useState([]);
@@ -27,8 +27,7 @@ const PermintaanIzinContentPetugas = () => {
         });
     }, []);
 
-    const sendStatus = (e, status, idTrans) => {
-        e.preventDefault();
+    const sendStatus = (status, idTrans) => {
         const accessToken = localStorage.getItem('accessToken');
 
         axios.post('http://localhost:9000/api/petugas/izins/verify', {
@@ -41,7 +40,8 @@ const PermintaanIzinContentPetugas = () => {
             }
         }).then(response => {
             window.alert(response.data.message);
-            setIzinReq(prevRequest => prevRequest.filter(request => request.id !== idTrans));
+            // setIzinReq(prevRequest => prevRequest.filter(request => request.id !== idTrans));
+            window.location.reload();
         }).catch(err => {
             console.log(err);
         });
@@ -54,7 +54,7 @@ const PermintaanIzinContentPetugas = () => {
         ));
     }
 
-    const componentRef = useRef();
+    // const componentRef = useRef();
 
     if (isEmpty === true) {
         return (

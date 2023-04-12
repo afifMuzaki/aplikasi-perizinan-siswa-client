@@ -8,7 +8,7 @@ import DetailPerizinanGuru from './components/sbAdmin/guruLayout/detailPerizinan
 
 import PermintaanIzinPetugas from './components/sbAdmin/petugasLayout/permintaanIzin';
 import RekapIzinPetugas from './components/sbAdmin/petugasLayout/rekapIzin';
-// import DetailIzin from './components/sbAdmin/petugasLayout/detailIzin';
+import DetailIzin from './components/sbAdmin/petugasLayout/detailIzin';
 
 
 function App() {
@@ -23,7 +23,7 @@ function App() {
         <Route path='/guru/rekap-izin' element={<RekapIzinGuru/>}></Route>
         <Route path='/petugas/permintaan-izin' element={<PermintaanIzinPetugas/>}></Route>
         <Route path='/petugas/rekap-izin' element={<RekapIzinPetugas/>}></Route>
-        {/* <Route path='/petugas/izin/detail' element={<DetailIzin/>}></Route> */}
+        <Route path='/petugas/izin/detail' element={<DetailIzin/>}></Route>
       </Routes>
     </BrowserRouter>
   );
